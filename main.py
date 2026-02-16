@@ -14,7 +14,7 @@ class Librarian(Person):
         self._books = []
         self._visitors = []
 
-    def add(self, title, author, status):
+    def addBook(self, title, author, status):
         self._books.append(Book(title, author, status))
         print("Книга добавлена!")
 
@@ -35,9 +35,11 @@ class Librarian(Person):
 
     def showUsers(self):
         print("Все пользователи")
+        found = False
         for visitor in self._visitors:
             print(visitor._name)
-        else:
+            found = True
+        if not found:
             print("Нет пользователей")
 
     def showBooks(self):
@@ -72,7 +74,7 @@ class Visitor(Person):
             if book._title == title:
                 if book._status == "Есть":
                     book._status = "Нет"
-                    self._myBooks.append(book)
+                    self._books.append(book)
                     print("Книга взята")
 
                 else:
@@ -85,68 +87,79 @@ print("Библиотека")
 print("Библиотекарь (1)")
 print("Пользователь (2)")
 
-choice = int(input("Выберите роль: "))
+librarian = None
 
-if choice == 1:
-    name = input("Ваше имя: ")
-    librarian = Librarian(name)
-    
-    while True:
-        print("Добавить книгу (1)")
-        print("Удалить книгу (2)")
-        print("Зарегистрировать пользователя (3)")
-        print("Показать всех пользователей (4)")
-        print("Показать все книги (5)")
-        print("Выйти (0)")
+while True:
+    choice = int(input("Выберите роль: "))
+
+    if choice == 1:
+        name = input("Ваше имя: ")
+        librarian = Librarian(name)
         
-        choice = int(input("Выберите: "))
+        while True:
+            print("Добавить книгу (1)")
+            print("Удалить книгу (2)")
+            print("Зарегистрировать пользователя (3)")
+            print("Показать всех пользователей (4)")
+            print("Показать все книги (5)")
+            print("Выйти (0)")
+            
+            choice = int(input("Выберите: "))
+            
+            if choice == 1:
+                title = input("Название: ")
+                author = input("Автор: ")
+                status = input("Доступна ли: ")
+                librarian.addBook(title, author, status)
+
+            elif choice == 2:
+                title = input("Название: ")
+                librarian.delete(title)
+
+            elif choice == 3:
+                librarian.addUser()
+
+            elif choice == 4:
+                librarian.showUsers()
+
+            elif choice == 5:
+                librarian.showBooks()
+
+            elif choice == 0:
+                break
+
+    elif choice == 2:
+        name = input("Ваше имя: ")
+
+        if librarian is None:
+            print("Сперва зайдите за библиотекаря")
+            continue
         
-        if choice == 1:
-            title = input("Название: ")
-            author = input("Автор: ")
-            status = input("Доступна ли: ")
-            librarian.add(title, author, status)
+        for visitor in librarian._visitors:
+            if visitor._name == name:
+                visitor = visitor
+            
+            archiveLib = Librarian("Библиотека")
+            archiveLib.addBook("Книга №1", "Автор №1", "Есть")
+            archiveLib.addBook("Книга №2", "Автор №2", "Есть")
+            
+            while True:
+                print("Пользователь: " + visitor._name)
+                print("Посмотреть книги (1)")
+                print("Взять книгу (2)")
+                print("Выйти (0)")
+                
+                action = int(input("Выберите: "))
+                
+                if action == 1:
+                    visitor.showBooks(archiveLib._books)
 
-        elif choice == 2:
-            title = input("Название: ")
-            librarian.delete(title)
+                elif action == 2:
+                    visitor.takeBook(archiveLib._books)
 
-        elif choice == 3:
-            librarian.addUser()
-
-        elif choice == 4:
-            librarian.showUsers()
-
-        elif choice == 5:
-            librarian.showBooks()
-
-        elif choice == 6:
+                elif action == 0:
+                    break
+        
+        else:
+            print("Создайте пользователя!")
             break
-
-elif choice == 2:
-    name = input("Ваше имя: ")
-    visitor = Visitor(name)
-    
-    archiveLib = Librarian("Библиотека")
-    archiveLib.add_book("Книга №1", "Автор №1", "Есть")
-    archiveLib.add_book("Книга №2", "Автор №2", "Есть")
-    
-    while True:
-        print("Пользователь: " + visitor._name)
-        print("1. Посмотреть книги")
-        print("2. Взять книгу")
-        print("3. Выйти")
-        
-        action = int(input("Выберите: "))
-        
-        if action == 1:
-            visitor.showBooks(archiveLib._books)
-
-        elif action == 2:
-            visitor.takeBook(archiveLib._books)
-
-        elif action == 3:
-            break
-
-else:
-    print("Ошибка")
